@@ -10,7 +10,14 @@ function migracion_dsed_register_post_types() {
         'label' => 'Minerales',
         'public' => true,
         'show_in_menu' => true,
-        'supports' => ['title']
+        'supports' => ['title','editor']
+    ]);
+
+    register_post_type('recurso', [
+        'label' => 'Recursos',
+        'public' => true,
+        'show_in_menu' => true,
+        'supports' => ['title','editor']
     ]);
 
     register_post_type('ejemplar', [

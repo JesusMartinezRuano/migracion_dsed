@@ -12,4 +12,6 @@ if (!defined('ABSPATH')) {
 define('MIGRACION_DSED_PATH', plugin_dir_path(__FILE__));
 
 require_once MIGRACION_DSED_PATH . 'includes/post-types.php';
+require_once MIGRACION_DSED_PATH . 'includes/importer.php';
+//require_once MIGRACION_DSED_PATH . 'includes/admin.php';
 // prueba bind mount
