@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-Puedes usar este `README.md` como documento raíz del proyecto.
-
 # Migración SIC/DSED Minerales a WordPress
 
 ## Descripción
