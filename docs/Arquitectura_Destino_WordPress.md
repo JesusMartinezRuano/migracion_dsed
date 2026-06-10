@@ -1,5 +1,3 @@
-Perfecto. Este documento debe describir el sistema resultante tras la migración y servir como referencia para futuros administradores y desarrolladores.
-
 # Arquitectura Destino WordPress
 
 ## Introducción
