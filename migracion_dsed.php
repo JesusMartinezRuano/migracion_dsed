@@ -16,6 +16,10 @@ require_once __DIR__.'/includes/post-types.php';
 require_once __DIR__.'/includes/import-relaciones.php';
 require_once __DIR__.'/includes/frontend-relaciones.php';
 require_once __DIR__.'/includes/frontend-minerales-relacionados.php';
+require_once __DIR__.'/includes/frontend-styles.php';
+require_once __DIR__.'/includes/import-fotos.php';
+require_once __DIR__.'/includes/import-rel-fotos.php';
+require_once __DIR__.'/includes/import-thumbnails.php';
 
 add_action('admin_menu', function () {
 
@@ -44,7 +48,7 @@ function dsed_admin_page()
     }
 	*/
     ?>
-
+/*
     <form method="post">
         <p>
             <input
@@ -54,6 +58,7 @@ function dsed_admin_page()
                 value="Importar relaciones">
         </p>
     </form>
+*/
     <?php
 
     echo '</div>';
