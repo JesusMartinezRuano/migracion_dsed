@@ -18,6 +18,27 @@ function dsed_indice_minerales()
     $html .= '<h1>Minerales</h1>';
     $html .= '<p>Total minerales: ' . count($minerales) . '</p>';
 
+    $html .= '<div class="dsed-filtros">';
+
+    $html .= '
+    <input
+        type="text"
+        id="dsed-search"
+        class="dsed-search"
+        placeholder="Buscar mineral..."
+    >';
+
+    $html .= '
+    <select
+        id="dsed-clasificacion"
+        class="dsed-search"
+    >
+        <option value="">Todas las clasificaciones</option>
+    </select>';
+
+    $html .= '</div>';
+
+
     $actual = '';
 
     foreach ($minerales as $m) {
@@ -55,7 +76,10 @@ function dsed_indice_minerales()
             'medium'
         );
 
-        $html .= '<div class="dsed-card-mineral">';
+        $html .= sprintf(
+            '<div class="dsed-card-mineral" data-clasificacion="%s">',
+            esc_attr(strtolower($clasificacion))
+        );
 
         if ($thumb) {
 
@@ -98,6 +122,84 @@ function dsed_indice_minerales()
     if ($actual !== '') {
         $html .= '</div>';
     }
+
+    $html .= '
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    const input = document.getElementById("dsed-search");
+    const select = document.getElementById("dsed-clasificacion");
+
+    const clases = new Set();
+
+    document
+        .querySelectorAll(".dsed-card-mineral")
+        .forEach(function(card) {
+
+            const c = card.dataset.clasificacion;
+
+            if (c) {
+                clases.add(c);
+            }
+        });
+
+    Array.from(clases)
+        .sort()
+        .forEach(function(c) {
+
+            const option =
+                document.createElement("option");
+
+            option.value = c;
+            option.textContent = c;
+
+            select.appendChild(option);
+        });
+
+    function aplicarFiltros() {
+
+        const texto =
+            input.value.toLowerCase();
+
+        const clasificacion =
+            select.value;
+
+        document
+            .querySelectorAll(".dsed-card-mineral")
+            .forEach(function(card) {
+
+                const contenido =
+                    card.textContent.toLowerCase();
+
+                const clase =
+                    card.dataset.clasificacion;
+
+                const coincideTexto =
+                    contenido.includes(texto);
+
+                const coincideClase =
+                    !clasificacion ||
+                    clase === clasificacion;
+
+                card.style.display =
+                    (coincideTexto && coincideClase)
+                    ? ""
+                    : "none";
+            });
+    }
+
+    input.addEventListener(
+        "keyup",
+        aplicarFiltros
+    );
+
+    select.addEventListener(
+        "change",
+        aplicarFiltros
+    );
+
+});
+</script>';
 
     $html .= '</div>';
 

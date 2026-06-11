@@ -47,45 +47,6 @@ add_action('wp_head', function () {
     margin-bottom:1em;
 }
 
-Es la mejora natural después de la landing. Ahora mismo tienes:
-
-A
-  ACANTITA
-  ACTINOLITA
-  ALABANDINA
-
-B
-  BARITINA
-
-Funcional, pero poco atractiva.
-
-Yo transformaría /minerales en un catálogo visual reutilizando los estilos que ya has creado para las relaciones.
-
-Diseño propuesto
-┌─────────────────────────┐
-│ [foto principal]        │
-│ CALCITA                 │
-│ Calcite                 │
-│ Carbonato               │
-└─────────────────────────┘
-
-┌─────────────────────────┐
-│ [foto principal]        │
-│ ACANTITA                │
-│ Acanthite               │
-│ Sulfuro                 │
-└─────────────────────────┘
-Datos disponibles
-
-Ya existen en WordPress:
-
-post_title            // CALCITA
-name                  // Calcite
-clasificacion         // Carbonato
-_thumbnail_id         // imagen principal
-CSS
-
-En includes/frontend-styles.php añadir:
 
 .dsed-grid-minerales{
     display:grid;
@@ -129,6 +90,27 @@ En includes/frontend-styles.php añadir:
 .dsed-mineral-class{
     font-size:0.9em;
 }
+
+.dsed-search{
+    width:100%;
+    max-width:500px;
+    padding:12px;
+    font-size:16px;
+    margin:20px 0;
+}
+
+.dsed-filtros{
+    display:flex;
+    gap:12px;
+    margin:20px 0;
+    flex-wrap:wrap;
+}
+
+.dsed-filtros .dsed-search{
+    flex:1;
+    margin:0;
+}
+
 </style>
 <?php
 });
