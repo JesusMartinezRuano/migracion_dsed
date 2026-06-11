@@ -656,17 +656,290 @@ Resultado:
 
 Sistema SIC/DSED sustituido por plataforma WordPress moderna manteniendo la funcionalidad, los contenidos y las relaciones históricas del repositorio mineralógico.
 
-Mi recomendación es guardarlo como:
+Después de haber completado la migración, mi valoración es que **sí merece la pena**, pero **no como sustitución del modelo WordPress actual**, sino como una **capa de trazabilidad y gobierno del dato**.
+
+Actualmente la migración se apoya en tres identificadores:
 
 ```text
-docs/README.md
+legacy_id     → ID en SIC/DSED
+post_id       → ID WordPress
+meta_key      → ubicación del dato
 ```
 
-y dejar la documentación completa de las fases en:
+Esto ha funcionado bien para migrar, pero presenta limitaciones para futuras evoluciones.
+
+---
+
+# Situación actual
+
+Por ejemplo, Calcita:
 
 ```text
-docs/Migracion_Fases_A_N.md
+legacy_id = 61
+post_id   = 66
 ```
 
-de forma que el README actúe como punto de entrada para cualquier administrador o desarrollador futuro.
->>>>>>> 9230c10 (Finaliza migracion SIC DSED a WordPress y añade documentacion completa)
+y tiene asociados:
+
+```text
+35 fotografías
+39 ejemplares
+36 recursos
+2 enlaces
+1 mineral relacionado
+```
+
+Todo ello se relaciona mediante:
+
+```text
+wp_posts
+wp_postmeta
+```
+
+El problema es que WordPress identifica:
+
+```text
+Mineral
+Fotografía
+Ejemplar
+Recurso
+```
+
+como entidades independientes, pero no identifica cada dato individual.
+
+Por ejemplo:
+
+```text
+Calcita
+ ├─ Fórmula
+ ├─ Dureza
+ ├─ Aplicación
+ ├─ Etimología
+ ├─ Fotografía 1
+ ├─ Fotografía 2
+ └─ ...
+```
+
+No existe un identificador universal para cada uno de esos elementos.
+
+---
+
+# Propuesta
+
+Crear una tabla transversal:
+
+```sql
+CREATE TABLE dsed_uid (
+    uid CHAR(36) PRIMARY KEY,
+    entity_type VARCHAR(50),
+    wp_post_id BIGINT,
+    legacy_id BIGINT,
+    source_table VARCHAR(100),
+    source_pk BIGINT,
+    created_at DATETIME
+);
+```
+
+Ejemplo:
+
+```text
+UID                                  Tipo
+--------------------------------------------------
+4b3e...                              Mineral
+9c7a...                              Fotografía
+11aa...                              Ejemplar
+7f9d...                              Recurso
+```
+
+---
+
+# Propuesta más potente
+
+Ir un paso más allá.
+
+## Tabla de entidades
+
+```sql
+dsed_entity
+```
+
+```text
+UID
+Tipo
+Nombre
+Origen
+Legacy_ID
+WP_ID
+```
+
+Ejemplo:
+
+```text
+UID=A001
+Tipo=MINERAL
+Nombre=CALCITA
+
+UID=A002
+Tipo=FOTO
+Nombre=Calcita_Asturias_01
+```
+
+---
+
+## Tabla de relaciones
+
+```sql
+dsed_relation
+```
+
+```text
+UID_ORIGEN
+UID_DESTINO
+TIPO_RELACION
+```
+
+Ejemplo:
+
+```text
+A001 → A002 FOTO_RELACIONADA
+A001 → A100 EJEMPLAR_RELACIONADO
+A001 → A300 RECURSO_RELACIONADO
+```
+
+---
+
+# Ventajas
+
+## 1. Independencia de WordPress
+
+Si dentro de 10 años migras a:
+
+* Drupal
+* Django
+* Headless CMS
+* GraphDB
+* Neo4j
+
+mantienes:
+
+```text
+UID = estable
+```
+
+aunque cambien todos los IDs internos.
+
+---
+
+## 2. Auditoría perfecta
+
+Podrías responder:
+
+```text
+¿De dónde salió esta fotografía?
+```
+
+o
+
+```text
+¿Qué elementos proceden del recurso SIC 726?
+```
+
+instantáneamente.
+
+---
+
+## 3. Trazabilidad histórica
+
+Ejemplo:
+
+```text
+Calcita
+UID = MIN-000061
+Legacy_ID = 61
+WP_ID = 66
+```
+
+Nunca pierdes la referencia original.
+
+---
+
+## 4. Integración IA
+
+Es probablemente la ventaja más interesante.
+
+Con una tabla de entidades:
+
+```text
+MINERAL
+EJEMPLAR
+FOTO
+RECURSO
+MUSEO
+YACIMIENTO
+```
+
+y otra de relaciones:
+
+```text
+RELACIONADO_CON
+FOTO_DE
+PROCEDE_DE
+ENLAZA_A
+```
+
+obtienes un grafo de conocimiento mineralógico.
+
+Después podrías consultar:
+
+```text
+Muéstrame todos los minerales relacionados con la calcita
+que tengan fotografías de Asturias
+y ejemplares en museos.
+```
+
+sin depender de WordPress.
+
+---
+
+# Mi valoración
+
+## Para la migración realizada
+
+```text
+No necesario
+```
+
+La migración ya está terminada y validada.
+
+---
+
+## Para preservación digital a largo plazo
+
+```text
+Muy recomendable
+```
+
+---
+
+## Para un DSED 3.0
+
+```text
+Altamente recomendable
+```
+
+Yo lo implementaría como:
+
+```text
+Fase O
+  dsed_entity
+  dsed_relation
+  UID global
+
+Fase P
+  API semántica
+
+Fase Q
+  Grafo de conocimiento mineralógico
+```
+
+porque convertiría el resultado de la migración en algo más valioso que un WordPress: un modelo de conocimiento independiente de cualquier plataforma futura.
