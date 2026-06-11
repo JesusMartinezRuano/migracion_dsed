@@ -20,6 +20,7 @@ require_once __DIR__.'/includes/frontend-styles.php';
 require_once __DIR__.'/includes/import-fotos.php';
 require_once __DIR__.'/includes/import-rel-fotos.php';
 require_once __DIR__.'/includes/import-thumbnails.php';
+require_once __DIR__.'/includes/frontend-minerales.php';
 
 add_action('admin_menu', function () {
 
@@ -32,6 +33,63 @@ add_action('admin_menu', function () {
     );
 
 });
+
+add_action('init', function () {
+
+    add_rewrite_rule(
+        '^minerales/?$',
+        'index.php?dsed_minerales=1',
+        'top'
+    );
+
+    add_rewrite_tag(
+        '%dsed_minerales%',
+        '([0-1])'
+    );
+
+});
+
+add_action('template_redirect', function () {
+
+    if (!get_query_var('dsed_minerales')) {
+        return;
+    }
+
+    status_header(200);
+
+    echo '<!DOCTYPE html>';
+    echo '<html>';
+    echo '<head>';
+    wp_head();
+    echo '</head>';
+    echo '<body>';
+
+    echo dsed_indice_minerales();
+
+    wp_footer();
+
+    echo '</body>';
+    echo '</html>';
+
+    exit;
+});
+
+add_filter('template_redirect', function () {
+
+    if (get_query_var('dsed_minerales')) {
+
+        echo dsed_indice_minerales();
+        exit;
+    }
+
+});
+
+add_filter('query_vars', function ($vars) {
+    $vars[] = 'dsed_minerales';
+    return $vars;
+});
+
+
 
 function dsed_admin_page()
 {

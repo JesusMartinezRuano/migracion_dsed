@@ -4,6 +4,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+
 function dsed_bloque_relacionados(
     $post_id,
     $meta_key,
@@ -126,6 +127,7 @@ function dsed_ficha_mineral($post_id)
 {
     $campos = [
 
+        'name'                => 'Nombre en inglés',
         'clasificacion'       => 'Clasificación',
         'formula'             => 'Fórmula',
         'dureza'              => 'Dureza',
